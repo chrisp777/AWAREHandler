@@ -5,35 +5,21 @@ Created on 23 Oct 2014
 '''
 import pyinotify
 
-class MyEventHandler(pyinotify.ProcessEvent):
-    def my_init(self, file_object=sys.stdout):
-        """
-        This is your constructor it is automatically called from ProcessEvent.__init__(),
-        And extra arguments passed to __init__() would be delegated automatically to 
-        my_init().
-        """
-        self._file_object = file_object
+# The watch manager stores the watches and provides operations on watches
+wm = pyinotify.WatchManager()
+
+mask = pyinotify.IN_DELETE | pyinotify.IN_CREATE  # watched events
+
+class EventHandler(pyinotify.ProcessEvent):
+    def process_IN_CREATE(self, event):
+        print "Creating:", event.pathname
 
     def process_IN_DELETE(self, event):
-        """
-        This method processes a specific type of event: IN_DELETE. event
-        is an instance of Event.
-        """
-        self._file_object.write('deleting: %s\n' % event.pathname)
-
-    def process_IN_CLOSE(self, event):
-        """
-        This method is called on these events: IN_CLOSE_WRITE and
-        IN_CLOSE_NOWRITE.
-        """
-        self._file_object.write('closing: %s\n' % event.pathname)
-
-    def process_default(self, event):
-        """
-        Eventually, this method is called for all others types of events.
-        This method can be useful when an action fits all events.
-        """
-        self._file_object.write('default processing\n')
-
-# A way to instantiate this class could be:
-p = MyEventHandler(file('/test', 'w'))
+        print "Removing:", event.pathname
+         
+handler = EventHandler()
+notifier = pyinotify.Notifier(wm, handler)
+# Internally, 'handler' is a callable object which on new events will be called like this: handler(new_event)
+ 
+wdd = wm.add_watch('test', mask, rec=True)
+notifier.loop()
