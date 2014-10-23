@@ -16,8 +16,7 @@ def handler(signum, frame):
 signal.signal(signal.SIGIO, handler)
 fd = os.open(FNAME,  os.O_RDONLY)
 fcntl.fcntl(fd, fcntl.F_SETSIG, 0)
-fcntl.fcntl(fd, fcntl.F_NOTIFY,
-            fcntl.DN_MODIFY | fcntl.DN_CREATE | fcntl.DN_MULTISHOT)
+fcntl.fcntl(fd, fcntl.F_NOTIFY, fcntl.DN_MODIFY | fcntl.DN_CREATE )
 
 while True:
     time.sleep(10000)
