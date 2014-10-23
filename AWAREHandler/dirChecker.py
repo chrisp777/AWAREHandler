@@ -4,9 +4,14 @@ Created on 23 Oct 2014
 @author: Chris
 '''
 import pyinotify
+
 class TrackModifications(pyinotify.ProcessEvent):
     def process_IN_MODIFY(selfself, Event):
         print 'IN_MODIFY'
+        
+class Empty(pyinotify.processEvent):
+    self._mesg = msg
+    print msg
 
 # Instanciate a new WatchManager (will be used to store watches).
 wm = pyinotify.WatchManager()
